@@ -1,0 +1,40 @@
+Brugeren trykker "Fetch Movies", og du henter data fra TMDB → gemmer snapshot.
+
+1. React Frontend sender en request:
+
+fetch("/snapshots/fetch", { method: "POST" });
+
+
+2. Spring Controller fanger POST-request:
+
+@PostMapping("/snapshots/fetch")
+public Snapshot fetchAndSaveMovies() {
+    List<MovieDTO> movies = tmdbService.fetchCurrentMovies(); // henter fra TMDB API
+    return snapshotService.saveSnapshot(movies);              // gemmer i DB
+}
+
+3. tmdbService henter data fra TMDB:
+
+public List<MovieDTO> fetchCurrentMovies() {
+    String url = "https://api.themoviedb.org/3/movie/now_playing?api_key=xxx";
+    ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
+
+    // Parse JSON → MovieDTO objects (eller brug Jackson)
+    return parseMovies(response.getBody());
+}
+
+4.
+snapshotService.saveSnapshot():
+
+    Opretter ny Snapshot (med timestamp)
+
+    Går film for film:
+
+    Tjekker om filmen findes i DB (movieRepo.findByTitle(...))
+
+    Hvis ikke: opret Movie
+
+    Opret MovieSnapshot med rating, votes, FK til movie + snapshot
+
+5.
+Til sidst returneres snapshot (eller success message)

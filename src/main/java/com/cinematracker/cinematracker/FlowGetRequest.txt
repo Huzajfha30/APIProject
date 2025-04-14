@@ -1,0 +1,40 @@
+hente data fra TMDB API
+
+Gemme dem i database
+
+Frontend kan derefter hente og vise data fra database
+
+Flow af GET REQUEST:
+
+1.
+React sender HTTP GET-request:
+
+fetch("/snapshots/latest")
+  .then(res => res.json())
+  .then(snapshot => setMovies(snapshot.movies));
+
+2.
+
+Spring Controller fanger GET-request:
+
+@GetMapping("/snapshots/latest")
+public Snapshot getLatestSnapshot() {
+    return snapshotRepo.findTopByOrderByCreatedAtDesc();
+}
+
+3.
+MovieRepository kalder automatisk databasen:
+
+List<Movie> findAll();  // Spring laver SQL’en bagved: SELECT * FROM movie;
+
+4.
+Data sendes tilbage i JSON-format:
+
+[
+  {
+    "id": 1,
+    "title": "Inception",
+    "description": "Sci-fi thriller",
+    ...
+  }
+]

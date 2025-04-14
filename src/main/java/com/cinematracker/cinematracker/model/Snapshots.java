@@ -1,33 +1,28 @@
 package com.cinematracker.cinematracker.model;
 
-
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jdk.jfr.Enabled;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import java.util.Date;
 
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
-@NoArgsConstructor
+
 @AllArgsConstructor
+@NoArgsConstructor
+
 
 @Entity
-public class Movie {
-
+public class Snapshots {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String title;
-    //private String description;
-    private Date releaseDate;
-    private int duration;
-
+    private LocalDateTime created_at;
 }

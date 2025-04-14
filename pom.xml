@@ -6,13 +6,13 @@
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
 		<version>3.4.4</version>
-		<relativePath/> <!-- lookup parent from repository -->
+		<relativePath/>
 	</parent>
 	<groupId>com.cinematracker</groupId>
 	<artifactId>cinematracker</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>cinematracker</name>
-	<description> project for Spring Boot</description>
+	<description> Project API 4th semester</description>
 	<url/>
 	<licenses>
 		<license/>
@@ -42,7 +42,7 @@
 		<dependency>
 			<groupId>org.postgresql</groupId>
 			<artifactId>postgresql</artifactId>
-			<version>42.7.1</version> <!-- tilføj denne linje -->
+			<version>42.7.1</version>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>

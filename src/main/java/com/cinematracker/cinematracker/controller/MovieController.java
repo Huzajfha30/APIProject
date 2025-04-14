@@ -1,28 +1,30 @@
 package com.cinematracker.cinematracker.controller;
 
-import com.cinematracker.cinematracker.dto.tmdbResponse;
 
-import com.cinematracker.cinematracker.service.TmdbService;
+import com.cinematracker.cinematracker.model.Movie;
+import com.cinematracker.cinematracker.repository.MovieRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-@CrossOrigin(origins = "http://localhost:5173") // hvis du har React frontend
+import java.util.List;
+
+@CrossOrigin(origins = "http://localhost:5173")
+
+
 @RestController
-@RequestMapping("/api/movies")
+@RequestMapping("/movies")
 public class MovieController {
 
-    private final TmdbService tmdbService;
+    @Autowired //dependency injection - spring automatisk instans af MovieRepository, så ingen: MovieRepository repo = new MovieRepository();
+    private MovieRepository movieRepo;
 
-    public MovieController(TmdbService tmdbService) {
-        this.tmdbService = tmdbService;
+    @GetMapping //metoden kaldes ved GET request - Fx henter data i react med fetch('/movies')
+    public List<Movie> getAllMovies() {
+        return movieRepo.findAll();
     }
 
-    @GetMapping("/popular")
-    public tmdbResponse getPopularMovies() {
-        return tmdbService.getPopularMovies();
-    }
-
-    @GetMapping("/upcoming")
-    public tmdbResponse getUpcomingMovies() {
-        return tmdbService.getUpcomingMovies();
+    @PostMapping//metoden kaldes ved POST request til ('/movies'). fx indsende data fra React
+    public Movie addMovie(@RequestBody Movie movie) {
+        return movieRepo.save(movie);
     }
 }
