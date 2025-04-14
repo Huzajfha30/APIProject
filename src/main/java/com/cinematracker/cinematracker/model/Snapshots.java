@@ -1,5 +1,6 @@
 package com.cinematracker.cinematracker.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -22,6 +23,7 @@ import java.time.LocalDateTime;
 public class Snapshots {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @JsonIgnore //så id ikke kommer med i react
     private Long id;
 
     private LocalDateTime created_at;

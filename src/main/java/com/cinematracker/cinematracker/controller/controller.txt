@@ -1,0 +1,1 @@
+Håndtere kun HTTP REQUESTS
