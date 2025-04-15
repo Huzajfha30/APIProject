@@ -3,9 +3,14 @@ package com.cinematracker.cinematracker.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+
+@Setter
+@Getter
 
 @Entity
-public class Movie_snapshots {
+public class MovieSnapshots {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

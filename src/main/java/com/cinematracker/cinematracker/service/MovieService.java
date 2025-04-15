@@ -14,10 +14,6 @@ public class MovieService {
     @Autowired
     private MovieRepository movieRepository;
 
-    public List<Movie> getAllMovies() {
-        return movieRepository.findAll();
-    }
-
     public Optional<Movie> getMovieById(Long id) {
         return movieRepository.findById(id);
     }

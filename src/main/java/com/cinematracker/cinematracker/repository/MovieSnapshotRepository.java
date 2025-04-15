@@ -1,8 +1,12 @@
 package com.cinematracker.cinematracker.repository;
 
-import com.cinematracker.cinematracker.model.Movie_snapshots;
+import com.cinematracker.cinematracker.model.MovieSnapshots;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface MovieSnapshotRepository extends JpaRepository<Movie_snapshots, Long> {
+import java.util.List;
+import java.util.Optional;
 
+public interface MovieSnapshotRepository extends JpaRepository<MovieSnapshots, Long> {
+
+    List<MovieSnapshots> findBySnapshotsId(Long snapshotsId);
 }

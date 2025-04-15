@@ -1,0 +1,6 @@
+MovieService → Movie entity (database operations)
+SnapshotService → Snapshots entity (database operations)
+TMDBService → External API (no direct model, uses DTOs for transferring data)
+
+jeg laver tmdbservice og det gør jeg fordi den handler external api, hvor de andre service handler entity og
+den arbejder med dto i stedet for direkte entity.
