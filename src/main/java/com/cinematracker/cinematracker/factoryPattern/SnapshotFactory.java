@@ -8,7 +8,7 @@ public class SnapshotFactory {
 
     public static Snapshots createSnapshot(LocalDateTime createdAt) {
         Snapshots snapshots = new Snapshots();
-        snapshots.setCreated_at(createdAt);
+        snapshots.setCreatedAt(createdAt);
         return snapshots;
     }
 

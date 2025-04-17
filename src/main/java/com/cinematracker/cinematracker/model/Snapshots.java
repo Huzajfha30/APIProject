@@ -1,6 +1,5 @@
 package com.cinematracker.cinematracker.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -25,5 +24,5 @@ public class Snapshots {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private LocalDateTime created_at;
+    private LocalDateTime createdAt;
 }

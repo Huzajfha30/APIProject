@@ -65,12 +65,12 @@ public class MovieController {
 
     @GetMapping("/snapshot-dates") //endpoint der henter alle snapshot datoer, hænger sammen med øvrige
     public List<LocalDateTime> getSnapshotDates() {
-        return snapshotRepo.findAll().stream().map(Snapshots::getCreated_at).collect(Collectors.toList());
+        return snapshotRepo.findAll().stream().map(Snapshots::getCreatedAt).collect(Collectors.toList());
     }
 
     @GetMapping("/latest") //viser nyeste snapshot automatisk i drop down menu
     public List<MovieSnapshots> getLatestSnapshot() {
-        Snapshots latest = snapshotRepo.findTopByOrderByCreated_atDesc();
+        Snapshots latest = snapshotRepo.findTopByOrderByCreatedAtDesc();
         return movieSnapshotRepo.findBySnapshotsId(latest.getId());
     }
 
