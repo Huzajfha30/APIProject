@@ -43,52 +43,60 @@ public class MovieController {
     @Autowired
     private TMDBService tmdbService;
 
-    @GetMapping("/movies")//metoden kaldes ved GET request - Fx henter data i react med fetch('/movies')
+    // Henter alle snapshots (bruges fx til dropdown)
+    @GetMapping("/snapshots")
     public List<Snapshots> getAllSnapshots() {
         return snapshotRepo.findAll();
     }
 
-    @PostMapping("/snapshot") //endpoint til at oprette ny snapshot
-    public ResponseEntity<Snapshots> createSnapshot(@RequestBody LocalDateTime createdAt) {
-        Snapshots snapshot = snapshotService.createNewSnapshot(createdAt);
-        return ResponseEntity.status(HttpStatus.CREATED).body(snapshot);
-    }
-
-    @GetMapping("/{snapshotId}") //hente specifik snapshot - dette er et requirement
-    public ResponseEntity<List<MovieSnapshots>> getMovieSnapshotsById(@PathVariable Long snapshotId) {
-        List<MovieSnapshots> movieSnapshots = movieSnapshotRepo.findBySnapshotsId(snapshotId);
-        if (movieSnapshots.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null); //404 error
-        }
-        return ResponseEntity.ok(movieSnapshots); // 200 ok
-    }
-
-    @GetMapping("/snapshot-dates") //endpoint der henter alle snapshot datoer, hænger sammen med øvrige
+    // Henter alle snapshots’ datoer (bruges til visning i frontend)
+    @GetMapping("/snapshot-dates")
     public List<LocalDateTime> getSnapshotDates() {
-        return snapshotRepo.findAll().stream().map(Snapshots::getCreatedAt).collect(Collectors.toList());
+        return snapshotRepo.findAll()
+                .stream()
+                .map(Snapshots::getCreatedAt)
+                .collect(Collectors.toList());
     }
 
-    @GetMapping("/latest") //viser nyeste snapshot automatisk i drop down menu
+    // Henter nyeste snapshot med tilhørende film
+    @GetMapping("/latest")
     public List<MovieSnapshots> getLatestSnapshot() {
         Snapshots latest = snapshotRepo.findTopByOrderByCreatedAtDesc();
         return movieSnapshotRepo.findBySnapshotsId(latest.getId());
     }
 
+    @GetMapping("/snapshot/{snapshotId}")
+    public ResponseEntity<List<MovieSnapshots>> getMovieSnapshotsBySnapshotId(@PathVariable String snapshotId) {
+        if (snapshotId.equals("snapshots")) {
+            // Håndter det specielle tilfælde
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }
 
-    @PostMapping//metoden kaldes ved POST request til ('/movies'). fx indsende data fra React
-    public Movie addMovie(@RequestBody Movie movie) {
-        return movieRepo.save(movie);
+        Long snapshotIdLong = Long.valueOf(snapshotId); // Konverterer den til Long
+        List<MovieSnapshots> movieSnapshots = movieSnapshotRepo.findBySnapshotsId(snapshotIdLong);
+        if (movieSnapshots.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+        return ResponseEntity.ok(movieSnapshots);
     }
 
+
+    // Henter film der spiller nu (fra TMDB)
     @GetMapping("/now-playing")
     public ResponseEntity<TMDBResponseDto> getNowPlayingMovies() {
         return ResponseEntity.ok(tmdbService.getNowPlayingMovies());
     }
 
-    @PostMapping("/fetch-movies") //manualt kald til at hente og gemme film
+    // Henter og gemmer film som snapshot – kald fra knap i UI
+    @PostMapping("/fetch-movies")
     public ResponseEntity<Snapshots> fetchAndSaveMovies() {
         Snapshots snapshots = movieSnapshotService.fetchAndSaveMoviesAsSnapshot();
         return ResponseEntity.status(HttpStatus.CREATED).body(snapshots);
     }
 
+    // Tilføjer ny film manuelt
+    @PostMapping
+    public Movie addMovie(@RequestBody Movie movie) {
+        return movieRepo.save(movie);
+    }
 }

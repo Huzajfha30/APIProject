@@ -30,6 +30,7 @@ public class MovieSnapshotService {
     private TMDBService tmdbService;
 
 
+
     public List<MovieSnapshots> getAll() {
         return movieSnapshotRepository.findAll();
     }
