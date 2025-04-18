@@ -4,6 +4,7 @@ import com.cinematracker.cinematracker.factoryPattern.SnapshotFactory;
 import com.cinematracker.cinematracker.model.Snapshots;
 import com.cinematracker.cinematracker.repository.SnapshotRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -25,23 +26,17 @@ public class SnapshotService {
     }
 
 
-
-
-
-
-
     public List<Snapshots> getAllSnapshots() {
-        return snapshotRepository.findAll();
+        return snapshotRepository.findAll(Sort.by(Sort.Direction.DESC, "createdAt"));
     }
-
     public Snapshots getSnapshotById(Long id) {
         return snapshotRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Snapshot not found ! custom error"));
     }
 
+
     public Snapshots saveSnapshot(Snapshots snapshot) {
         return snapshotRepository.save(snapshot);
     }
-
 
 }

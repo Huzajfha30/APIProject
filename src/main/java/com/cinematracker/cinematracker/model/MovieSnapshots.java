@@ -12,14 +12,12 @@ import lombok.Setter;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-
 @Entity
 public class MovieSnapshots {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @JsonIgnore
-    private Long id;
+    private Long id;  // Ikke længere @JsonIgnore, så det vises i JSON-responsen
 
     @ManyToOne
     @JoinColumn(name = "movie_id")
@@ -30,5 +28,7 @@ public class MovieSnapshots {
     private Snapshots snapshots;
 
     private double rating;
+
     private int votes;
 }
+
