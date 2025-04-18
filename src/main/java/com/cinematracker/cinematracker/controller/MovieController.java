@@ -75,6 +75,7 @@ public class MovieController {
             List<MovieSnapshots> movieSnapshots = movieSnapshotRepo.findBySnapshotsId(snapshotIdLong);
             return ResponseEntity.ok(movieSnapshots);
         } catch (NumberFormatException e) {
+
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }
     }

@@ -13,10 +13,8 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
-
 @NoArgsConstructor
 @AllArgsConstructor
-
 @Service
 public class MovieSnapshotService {
 
@@ -29,8 +27,6 @@ public class MovieSnapshotService {
     @Autowired
     private TMDBService tmdbService;
 
-
-
     public List<MovieSnapshots> getAll() {
         return movieSnapshotRepository.findAll();
     }
@@ -41,6 +37,8 @@ public class MovieSnapshotService {
 
     private void saveMoviesToSnapshot(TMDBResponseDto tmdbResponseDto, Snapshots snapshot) {
         for (TMDBMovieDto movieDto : tmdbResponseDto.getResults()) {
+            System.out.println("Saving movie: " + movieDto.getTitle());
+            System.out.println("Rating: " + movieDto.getRating() + " Votes: " + movieDto.getVotes());
             // Create or update Movie entity
             Movie movie = new Movie();
             movie.setTitle(movieDto.getTitle());
@@ -52,14 +50,13 @@ public class MovieSnapshotService {
             movieSnapshot.setMovie(movie);
             movieSnapshot.setSnapshots(snapshot);
             movieSnapshot.setRating(movieDto.getRating());
-            movieSnapshot.setVotes(movieDto.getVoteCount());
+            movieSnapshot.setVotes(movieDto.getVotes());
 
             save(movieSnapshot);
         }
     }
 
     public Snapshots fetchAndSaveMoviesAsSnapshot() {
-
         Snapshots snapshots = snapshotService.createNewSnapshot(LocalDateTime.now());
         TMDBResponseDto tmdbResponseDto = tmdbService.getNowPlayingMovies();
         saveMoviesToSnapshot(tmdbResponseDto, snapshots);
@@ -67,3 +64,4 @@ public class MovieSnapshotService {
         return snapshots;
     }
 }
+

@@ -1,5 +1,6 @@
 package com.cinematracker.cinematracker.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
@@ -15,9 +16,10 @@ public class TMDBMovieDto { //matcher en enkelt film i results[]-listen
     private String title;
 
     @JsonProperty("release_date")
+    @JsonFormat(pattern = "yyy-MM-dd")
     private Date releaseDate;
     @JsonProperty("vote_average")
-    private double rating;
+    private Double rating;
     @JsonProperty("vote_count")
-    private int voteCount;
+    private Integer votes;
 }

@@ -2,6 +2,7 @@ package com.cinematracker.cinematracker.model;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -27,8 +28,7 @@ public class MovieSnapshots {
     @JoinColumn(name = "snapshot_id")
     private Snapshots snapshots;
 
-    private double rating;
-
-    private int votes;
+    private Double rating;
+    private Integer votes;
 }
 
