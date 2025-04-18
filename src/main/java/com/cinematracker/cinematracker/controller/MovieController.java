@@ -65,37 +65,17 @@ public class MovieController {
     @GetMapping("/snapshot/{snapshotId}")
     public ResponseEntity<List<MovieSnapshots>> getMovieSnapshotsBySnapshotId(@PathVariable String snapshotId) {
         try {
-            // Konverter snapshotId til Long
             Long snapshotIdLong = Long.parseLong(snapshotId);
-
-            // Find snapshot ved ID
             Optional<Snapshots> snapshot = snapshotRepo.findById(snapshotIdLong);
-
             if (snapshot.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
             }
-
-            // Hent MovieSnapshots for det valgte snapshot
             List<MovieSnapshots> movieSnapshots = movieSnapshotRepo.findBySnapshotsId(snapshotIdLong);
-
-            // Hvis der er flere movieSnapshots, log dem alle
-            if (!movieSnapshots.isEmpty()) {
-                for (MovieSnapshots ms : movieSnapshots) {
-                    System.out.println("Movie: " + ms.getMovie().getTitle());
-                    System.out.println("Rating: " + ms.getRating() + " Votes: " + ms.getVotes());
-                }
-            }
-
-            // Returner MovieSnapshots som en JSON response
             return ResponseEntity.ok(movieSnapshots);
-
         } catch (NumberFormatException e) {
-            // Håndter tilfælde hvor snapshotId ikke kan konverteres til Long
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }
     }
-
-
 
     @GetMapping("/now-playing")
     public ResponseEntity<TMDBResponseDto> getNowPlayingMovies() {

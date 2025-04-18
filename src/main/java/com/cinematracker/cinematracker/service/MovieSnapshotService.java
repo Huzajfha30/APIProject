@@ -27,9 +27,6 @@ public class MovieSnapshotService {
     @Autowired
     private TMDBService tmdbService;
 
-    public List<MovieSnapshots> getAll() {
-        return movieSnapshotRepository.findAll();
-    }
 
     public MovieSnapshots save(MovieSnapshots ms) {
         return movieSnapshotRepository.save(ms);
@@ -37,8 +34,7 @@ public class MovieSnapshotService {
 
     private void saveMoviesToSnapshot(TMDBResponseDto tmdbResponseDto, Snapshots snapshot) {
         for (TMDBMovieDto movieDto : tmdbResponseDto.getResults()) {
-            System.out.println("Saving movie: " + movieDto.getTitle());
-            System.out.println("Rating: " + movieDto.getRating() + " Votes: " + movieDto.getVotes());
+
             // Create or update Movie entity
             Movie movie = new Movie();
             movie.setTitle(movieDto.getTitle());

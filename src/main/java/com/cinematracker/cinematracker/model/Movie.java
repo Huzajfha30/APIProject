@@ -28,8 +28,8 @@ public class Movie {
     private Long id;
 
     private String title;
-    //private String description;
     private Date releaseDate;
-    private int duration;
+    //private String description;
+    private int duration; //denne skal fixes
 
 }
