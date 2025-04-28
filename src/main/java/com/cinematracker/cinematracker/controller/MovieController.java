@@ -1,13 +1,10 @@
 package com.cinematracker.cinematracker.controller;
 
 
+import com.cinematracker.cinematracker.dto.SnapshotDto;
 import com.cinematracker.cinematracker.dto.TMDBResponseDto;
-import com.cinematracker.cinematracker.model.Movie;
-import com.cinematracker.cinematracker.model.MovieSnapshots;
-import com.cinematracker.cinematracker.model.Snapshots;
-import com.cinematracker.cinematracker.repository.MovieRepository;
-import com.cinematracker.cinematracker.repository.MovieSnapshotRepository;
-import com.cinematracker.cinematracker.repository.SnapshotRepository;
+import com.cinematracker.cinematracker.model.*;
+import com.cinematracker.cinematracker.repository.*;
 import com.cinematracker.cinematracker.service.MovieSnapshotService;
 import com.cinematracker.cinematracker.service.SnapshotService;
 import com.cinematracker.cinematracker.service.TMDBService;
@@ -42,6 +39,10 @@ public class MovieController {
     private SnapshotService snapshotService;
     @Autowired
     private TMDBService tmdbService;
+    @Autowired
+    private UpcomingMoviesSnapshotRepository upcomingMoviesSnapshotRepository;
+    @Autowired
+    private UpcomingSnapshotsRepository upcomingSnapshotRepository;
 
     @GetMapping("/movies")//metoden kaldes ved GET request - Fx henter data i react med fetch('/movies')
     public List<Snapshots> getAllSnapshots() {
@@ -91,4 +92,28 @@ public class MovieController {
         return ResponseEntity.status(HttpStatus.CREATED).body(snapshots);
     }
 
+    // UPCOMING MOVIES Handling - NEW Structure
+    @GetMapping("/upcoming")
+    public ResponseEntity<TMDBResponseDto> getUpcomingMovies() {
+        return ResponseEntity.ok(tmdbService.getUpcomingMovies());
+    }
+
+    @PostMapping("/fetch-upcoming")
+    public ResponseEntity<UpcomingSnapshot> fetchAndSaveUpcomingMovies() {
+        UpcomingSnapshot snapshot = movieSnapshotService.fetchAndSaveUpcomingMovies();
+        return ResponseEntity.status(HttpStatus.CREATED).body(snapshot);
+    }
+
+    @GetMapping("/upcoming-snapshot-dates")
+    public List<SnapshotDto> getUpcomingSnapshotDates() {
+        return upcomingSnapshotRepository.findAll().stream()
+                .map(s -> new SnapshotDto(s.getId(), s.getCreatedAt()))
+                .collect(Collectors.toList());
+    }
+
+    @GetMapping("/upcoming-snapshots/{snapshotId}")
+    public List<UpcomingMoviesSnapshot> getUpcomingMoviesBySnapshotId(@PathVariable Long snapshotId) {
+        UpcomingSnapshot snapshot = upcomingSnapshotRepository.findById(snapshotId).orElseThrow();
+        return upcomingMoviesSnapshotRepository.findByUpcomingSnapshot(snapshot);
+    }
 }

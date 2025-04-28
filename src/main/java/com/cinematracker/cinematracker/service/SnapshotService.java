@@ -2,7 +2,9 @@ package com.cinematracker.cinematracker.service;
 
 import com.cinematracker.cinematracker.factoryPattern.SnapshotFactory;
 import com.cinematracker.cinematracker.model.Snapshots;
+import com.cinematracker.cinematracker.model.UpcomingMoviesSnapshot;
 import com.cinematracker.cinematracker.repository.SnapshotRepository;
+import com.cinematracker.cinematracker.repository.UpcomingMoviesSnapshotRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,6 +16,7 @@ public class SnapshotService {
 
     @Autowired
     private SnapshotRepository snapshotRepository;
+    private UpcomingMoviesSnapshotRepository upcomingMoviesSnapshotRepository ;
 
     //Create snapshot vha. factory pattern
     public Snapshots createNewSnapshot(LocalDateTime createdAt) {
@@ -22,7 +25,10 @@ public class SnapshotService {
         }
         Snapshots snapshot = SnapshotFactory.createSnapshot(createdAt);
         return snapshotRepository.save(snapshot);
+
     }
+
+
 
 
 

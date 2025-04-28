@@ -2,17 +2,21 @@ package com.cinematracker.cinematracker.service;
 
 import com.cinematracker.cinematracker.dto.TMDBMovieDto;
 import com.cinematracker.cinematracker.dto.TMDBResponseDto;
-import com.cinematracker.cinematracker.model.Movie;
-import com.cinematracker.cinematracker.model.MovieSnapshots;
-import com.cinematracker.cinematracker.model.Snapshots;
+import com.cinematracker.cinematracker.model.*;
 import com.cinematracker.cinematracker.repository.MovieSnapshotRepository;
+import com.cinematracker.cinematracker.repository.SnapshotRepository;
+import com.cinematracker.cinematracker.repository.UpcomingMoviesSnapshotRepository;
+import com.cinematracker.cinematracker.repository.UpcomingSnapshotsRepository;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -28,6 +32,10 @@ public class MovieSnapshotService {
     private MovieService movieService;
     @Autowired
     private TMDBService tmdbService;
+    @Autowired
+    private UpcomingMoviesSnapshotRepository upcomingMoviesSnapshotRepository;
+    @Autowired
+    UpcomingSnapshotsRepository upcomingSnapshotRepository;
 
 
     public List<MovieSnapshots> getAll() {
@@ -65,4 +73,31 @@ public class MovieSnapshotService {
 
         return snapshots;
     }
+
+
+    public UpcomingSnapshot fetchAndSaveUpcomingMovies() {
+        TMDBResponseDto response = tmdbService.getUpcomingMovies();
+
+        UpcomingSnapshot upcomingSnapshot = new UpcomingSnapshot();
+        upcomingSnapshot.setCreatedAt(LocalDateTime.now());
+        UpcomingSnapshot savedUpcomingSnapshot = upcomingSnapshotRepository.save(upcomingSnapshot);
+
+        for (TMDBMovieDto dto : response.getResults()) {
+            UpcomingMoviesSnapshot upcoming = new UpcomingMoviesSnapshot();
+            upcoming.setTmdbId(dto.getId());
+            upcoming.setTitle(dto.getTitle());
+            upcoming.setReleaseDate(dto.getReleaseDate());
+            upcoming.setRating(dto.getRating());
+            upcoming.setVoteCount(dto.getVoteCount());
+            upcoming.setPosterPath(dto.getPosterPath());
+            upcoming.setCreatedAt(java.sql.Date.valueOf(LocalDate.now()));
+            upcoming.setUpcomingSnapshot(savedUpcomingSnapshot); // <-- vigtigt
+
+            upcomingMoviesSnapshotRepository.save(upcoming);
+        }
+
+        return savedUpcomingSnapshot;
+    }
+
+
 }

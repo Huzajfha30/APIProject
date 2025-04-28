@@ -10,30 +10,18 @@ import java.time.LocalDateTime;
 
 @Getter
 @Setter
-
 @AllArgsConstructor
 @NoArgsConstructor
 
-
 @Entity
-public class Snapshots {
+public class UpcomingSnapshot {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private LocalDateTime createdAt;
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
     @PrePersist
     public void prePersist() {
         if (createdAt == null) {
@@ -41,8 +29,19 @@ public class Snapshots {
         }
     }
 
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
 
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 }
