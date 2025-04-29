@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 //CRUD class
 
@@ -44,41 +45,43 @@ public class MovieController {
     @Autowired
     private UpcomingSnapshotsRepository upcomingSnapshotRepository;
 
-    @GetMapping("/movies")//metoden kaldes ved GET request - Fx henter data i react med fetch('/movies')
+    @GetMapping("/snapshot")
     public List<Snapshots> getAllSnapshots() {
         return snapshotRepo.findAll();
     }
 
-    @PostMapping("/snapshot") //endpoint til at oprette ny snapshot
-    public ResponseEntity<Snapshots> createSnapshot(@RequestBody LocalDateTime createdAt) {
-        Snapshots snapshot = snapshotService.createNewSnapshot(createdAt);
-        return ResponseEntity.status(HttpStatus.CREATED).body(snapshot);
-    }
-
-    @GetMapping("/{snapshotId}") //hente specifik snapshot - dette er et requirement
-    public ResponseEntity<List<MovieSnapshots>> getMovieSnapshotsById(@PathVariable Long snapshotId) {
-        List<MovieSnapshots> movieSnapshots = movieSnapshotRepo.findBySnapshotsId(snapshotId);
-        if (movieSnapshots.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null); //404 error
-        }
-        return ResponseEntity.ok(movieSnapshots); // 200 ok
-    }
-
-    @GetMapping("/snapshot-dates") //endpoint der henter alle snapshot datoer, hænger sammen med øvrige
+    @GetMapping("/snapshot-dates")
     public List<LocalDateTime> getSnapshotDates() {
-        return snapshotRepo.findAll().stream().map(Snapshots::getCreatedAt).collect(Collectors.toList());
+        return snapshotRepo.findAll()
+                .stream()
+                .map(Snapshots::getCreatedAt)
+                .collect(Collectors.toList());
     }
 
-    @GetMapping("/latest") //viser nyeste snapshot automatisk i drop down menu
-    public List<MovieSnapshots> getLatestSnapshot() {
+    @GetMapping("/latest")
+    public ResponseEntity<List<MovieSnapshots>> getLatestSnapshot() {
         Snapshots latest = snapshotRepo.findTopByOrderByCreatedAtDesc();
-        return movieSnapshotRepo.findBySnapshotsId(latest.getId());
+        if (latest == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+
+        List<MovieSnapshots> movieSnapshots = movieSnapshotRepo.findBySnapshotsId(latest.getId());
+        return ResponseEntity.ok(movieSnapshots);
     }
 
-
-    @PostMapping//metoden kaldes ved POST request til ('/movies'). fx indsende data fra React
-    public Movie addMovie(@RequestBody Movie movie) {
-        return movieRepo.save(movie);
+    @GetMapping("/snapshot/{snapshotId}")
+    public ResponseEntity<List<MovieSnapshots>> getMovieSnapshotsBySnapshotId(@PathVariable String snapshotId) {
+        try {
+            Long snapshotIdLong = Long.parseLong(snapshotId);
+            Optional<Snapshots> snapshot = snapshotRepo.findById(snapshotIdLong);
+            if (snapshot.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+            }
+            List<MovieSnapshots> movieSnapshots = movieSnapshotRepo.findBySnapshotsId(snapshotIdLong);
+            return ResponseEntity.ok(movieSnapshots);
+        } catch (NumberFormatException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }
     }
 
     @GetMapping("/now-playing")
@@ -86,11 +89,18 @@ public class MovieController {
         return ResponseEntity.ok(tmdbService.getNowPlayingMovies());
     }
 
-    @PostMapping("/fetch-movies") //manualt kald til at hente og gemme film
-    public ResponseEntity<Snapshots> fetchAndSaveMovies() {
-        Snapshots snapshots = movieSnapshotService.fetchAndSaveMoviesAsSnapshot();
-        return ResponseEntity.status(HttpStatus.CREATED).body(snapshots);
+    @PostMapping("/fetch-movies")
+    public ResponseEntity<List<MovieSnapshots>> fetchAndSaveMovies() {
+        Snapshots snapshot = movieSnapshotService.fetchAndSaveMoviesAsSnapshot();
+        List<MovieSnapshots> savedSnapshotMovies = movieSnapshotRepo.findBySnapshotsId(snapshot.getId());
+        return ResponseEntity.status(HttpStatus.CREATED).body(savedSnapshotMovies);
     }
+
+    @PostMapping
+    public Movie addMovie(@RequestBody Movie movie) {
+        return movieRepo.save(movie);
+    }
+
 
     // UPCOMING MOVIES Handling - NEW Structure
     @GetMapping("/upcoming")
@@ -116,4 +126,9 @@ public class MovieController {
         UpcomingSnapshot snapshot = upcomingSnapshotRepository.findById(snapshotId).orElseThrow();
         return upcomingMoviesSnapshotRepository.findByUpcomingSnapshot(snapshot);
     }
+    @GetMapping("/movie-vote-history/by-title/{title}")
+    public List<MovieSnapshots> getMovieHistoryByTitle(@PathVariable String title) {
+        return movieSnapshotRepo.findByMovieTitle(title);
+    }
+
 }

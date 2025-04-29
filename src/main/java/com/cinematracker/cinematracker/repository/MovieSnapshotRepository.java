@@ -9,4 +9,8 @@ import java.util.Optional;
 public interface MovieSnapshotRepository extends JpaRepository<MovieSnapshots, Long> {
 
     List<MovieSnapshots> findBySnapshotsId(Long snapshotsId);
+    List<MovieSnapshots> findByMovieIdOrderBySnapshotsCreatedAtAsc(Long movieId);
+    List<MovieSnapshots> findByMovieTitle(String title);
+
+
 }
