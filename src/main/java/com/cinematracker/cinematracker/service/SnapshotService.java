@@ -29,8 +29,12 @@ public class SnapshotService {
         if (createdAt.isBefore(LocalDateTime.now()) || createdAt == null) {
             throw new RuntimeException("CreateNewSnapshot error");
         }
-        Snapshots snapshot = SnapshotFactory.createSnapshot(createdAt);
+
+
+        Snapshots snapshot = SnapshotFactory.getInstance().createSnapshot(createdAt);
         return snapshotRepository.save(snapshot);
+        /*Snapshots snapshot = SnapshotFactory.createSnapshot(createdAt);
+        return snapshotRepository.save(snapshot);*/ //før singleton pattern
 
     }
 
