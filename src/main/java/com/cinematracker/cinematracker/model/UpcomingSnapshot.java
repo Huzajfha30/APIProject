@@ -1,5 +1,6 @@
 package com.cinematracker.cinematracker.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -25,6 +26,7 @@ public class UpcomingSnapshot {
 
 
     @OneToMany(mappedBy = "upcomingSnapshot", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     private List<UpcomingMovieSnapshots> movieSnapshots;
 
     @PrePersist

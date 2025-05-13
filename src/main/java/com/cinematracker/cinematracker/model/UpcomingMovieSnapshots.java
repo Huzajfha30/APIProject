@@ -1,5 +1,6 @@
 package com.cinematracker.cinematracker.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -25,6 +26,7 @@ public class UpcomingMovieSnapshots {
 
     @ManyToOne
     @JoinColumn(name = "upcoming_snapshot_id")
+    @JsonBackReference
     private UpcomingSnapshot upcomingSnapshot;
 
     public Long getId() {
