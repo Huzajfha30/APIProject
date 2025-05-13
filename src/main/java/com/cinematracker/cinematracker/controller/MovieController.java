@@ -95,6 +95,25 @@ public class MovieController {
         List<MovieSnapshots> savedSnapshotMovies = movieSnapshotRepo.findBySnapshotsId(snapshot.getId());
         return ResponseEntity.status(HttpStatus.CREATED).body(savedSnapshotMovies);
     }
+    @DeleteMapping("/snapshot/{snapshotId}")
+    public ResponseEntity<String> deleteSnapshot(@PathVariable Long snapshotId) {
+        boolean deleted = snapshotService.deleteSnapshot(snapshotId);
+        if (deleted) {
+            return ResponseEntity.ok("Snapshot deleted successfully");
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Snapshot not found");
+        }
+    }
+    @DeleteMapping("/upcoming-snapshot/{snapshotId}")
+    public ResponseEntity<String> deleteUpcomingSnapshot(@PathVariable Long snapshotId) {
+        boolean deleted = snapshotService.deleteUpcomingSnapshot(snapshotId);
+        if (deleted) {
+            return ResponseEntity.ok("Upcoming snapshot deleted successfully");
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Upcoming snapshot not found");
+        }
+    }
+
 
     @PostMapping
     public Movie addMovie(@RequestBody Movie movie) {
