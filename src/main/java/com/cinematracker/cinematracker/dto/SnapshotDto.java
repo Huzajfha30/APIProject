@@ -1,21 +1,18 @@
 package com.cinematracker.cinematracker.dto;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import java.time.LocalDateTime;
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 
 public class SnapshotDto {
     private Long id;
     private LocalDateTime createdAt;
 
-    public SnapshotDto(Long id, LocalDateTime createdAt) {
-        this.id = id;
-        this.createdAt = createdAt;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
 }

@@ -26,45 +26,7 @@ public class MovieSnapshots {
     private Snapshots snapshots;
 
     private double rating;
-    private int votes;
+    @Column(nullable = true)
+    private Integer voteCount;
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Movie getMovie() {
-        return movie;
-    }
-
-    public void setMovie(Movie movie) {
-        this.movie = movie;
-    }
-
-    public Snapshots getSnapshots() {
-        return snapshots;
-    }
-
-    public void setSnapshots(Snapshots snapshots) {
-        this.snapshots = snapshots;
-    }
-
-    public double getRating() {
-        return rating;
-    }
-
-    public void setRating(double rating) {
-        this.rating = rating;
-    }
-
-    public int getVotes() {
-        return votes;
-    }
-
-    public void setVotes(int votes) {
-        this.votes = votes;
-    }
 }

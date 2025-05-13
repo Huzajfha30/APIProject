@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter
@@ -22,6 +23,10 @@ public class UpcomingSnapshot {
 
     private LocalDateTime createdAt;
 
+
+    @OneToMany(mappedBy = "upcomingSnapshot", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<UpcomingMovieSnapshots> movieSnapshots;
+
     @PrePersist
     public void prePersist() {
         if (createdAt == null) {
@@ -29,19 +34,4 @@ public class UpcomingSnapshot {
         }
     }
 
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
 }

@@ -23,17 +23,6 @@ public class Snapshots {
 
     private LocalDateTime createdAt;
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
     @PrePersist
     public void prePersist() {
         if (createdAt == null) {
@@ -41,8 +30,4 @@ public class Snapshots {
         }
     }
 
-
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
 }

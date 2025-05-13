@@ -2,10 +2,9 @@ package com.cinematracker.cinematracker.service;
 
 import com.cinematracker.cinematracker.factoryPattern.SnapshotFactory;
 import com.cinematracker.cinematracker.model.Snapshots;
-import com.cinematracker.cinematracker.model.UpcomingMoviesSnapshot;
 import com.cinematracker.cinematracker.repository.MovieSnapshotRepository;
 import com.cinematracker.cinematracker.repository.SnapshotRepository;
-import com.cinematracker.cinematracker.repository.UpcomingMoviesSnapshotRepository;
+import com.cinematracker.cinematracker.repository.UpcomingMovieSnapshotsRepository;
 import com.cinematracker.cinematracker.repository.UpcomingSnapshotsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,7 +18,7 @@ public class SnapshotService {
     @Autowired
     private SnapshotRepository snapshotRepository;
     @Autowired
-    private UpcomingMoviesSnapshotRepository upcomingMoviesSnapshotRepository ;
+    private UpcomingMovieSnapshotsRepository upcomingMovieSnapshotsRepository;
     @Autowired
     private MovieSnapshotRepository movieSnapshotRepository ;
     @Autowired
@@ -43,10 +42,11 @@ public class SnapshotService {
         }
         return false;
     }
+
     public boolean deleteUpcomingSnapshot(Long snapshotId) {
         if (upcomingSnapshotRepository.existsById(snapshotId)) {
             // Delete associated upcoming movie snapshots
-            upcomingMoviesSnapshotRepository.deleteByUpcomingSnapshotId(snapshotId);
+            upcomingMovieSnapshotsRepository.deleteByUpcomingSnapshotId(snapshotId);
             // Delete the snapshot itself
             upcomingSnapshotRepository.deleteById(snapshotId);
             return true;

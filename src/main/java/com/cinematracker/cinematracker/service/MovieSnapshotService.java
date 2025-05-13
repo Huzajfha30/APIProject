@@ -4,19 +4,16 @@ import com.cinematracker.cinematracker.dto.TMDBMovieDto;
 import com.cinematracker.cinematracker.dto.TMDBResponseDto;
 import com.cinematracker.cinematracker.model.*;
 import com.cinematracker.cinematracker.repository.MovieSnapshotRepository;
-import com.cinematracker.cinematracker.repository.SnapshotRepository;
-import com.cinematracker.cinematracker.repository.UpcomingMoviesSnapshotRepository;
+import com.cinematracker.cinematracker.repository.UpcomingMovieSnapshotsRepository;
 import com.cinematracker.cinematracker.repository.UpcomingSnapshotsRepository;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -33,7 +30,7 @@ public class MovieSnapshotService {
     @Autowired
     private TMDBService tmdbService;
     @Autowired
-    private UpcomingMoviesSnapshotRepository upcomingMoviesSnapshotRepository;
+    private UpcomingMovieSnapshotsRepository upcomingMovieSnapshotsRepository;
     @Autowired
     UpcomingSnapshotsRepository upcomingSnapshotRepository;
 
@@ -59,7 +56,7 @@ public class MovieSnapshotService {
             movieSnapshot.setMovie(movie);
             movieSnapshot.setSnapshots(snapshot);
             movieSnapshot.setRating(movieDto.getRating());
-            movieSnapshot.setVotes(movieDto.getVoteCount());
+            movieSnapshot.setVoteCount(movieDto.getVoteCount());
 
             save(movieSnapshot);
         }
@@ -75,28 +72,37 @@ public class MovieSnapshotService {
     }
 
 
-    public UpcomingSnapshot fetchAndSaveUpcomingMovies() {
+    public List<UpcomingMovieSnapshots> fetchAndSaveUpcomingMovies() {
         TMDBResponseDto response = tmdbService.getUpcomingMovies();
 
         UpcomingSnapshot upcomingSnapshot = new UpcomingSnapshot();
         upcomingSnapshot.setCreatedAt(LocalDateTime.now());
         UpcomingSnapshot savedUpcomingSnapshot = upcomingSnapshotRepository.save(upcomingSnapshot);
 
+        List<UpcomingMovieSnapshots> savedSnapshots = new ArrayList<>();
+
         for (TMDBMovieDto dto : response.getResults()) {
-            UpcomingMoviesSnapshot upcoming = new UpcomingMoviesSnapshot();
-            upcoming.setTmdbId(dto.getId());
-            upcoming.setTitle(dto.getTitle());
-            upcoming.setReleaseDate(dto.getReleaseDate());
+            // Create and save the Movie entity first
+            Movie movie = new Movie();
+            movie.setTitle(dto.getTitle());
+            movie.setReleaseDate(dto.getReleaseDate());
+            movie.setRating(dto.getRating());
+            movie.setVoteCount(dto.getVoteCount());
+            movie.setPosterPath(dto.getPosterPath());
+            movie.setTmdbId(dto.getId());
+            movie = movieService.saveMovie(movie);
+
+            // Then create the UpcomingMovieSnapshots entity with the Movie
+            UpcomingMovieSnapshots upcoming = new UpcomingMovieSnapshots();
+            upcoming.setMovie(movie);
+            upcoming.setUpcomingSnapshot(savedUpcomingSnapshot);
             upcoming.setRating(dto.getRating());
             upcoming.setVoteCount(dto.getVoteCount());
-            upcoming.setPosterPath(dto.getPosterPath());
-            upcoming.setCreatedAt(java.sql.Date.valueOf(LocalDate.now()));
-            upcoming.setUpcomingSnapshot(savedUpcomingSnapshot); // <-- vigtigt
 
-            upcomingMoviesSnapshotRepository.save(upcoming);
+            savedSnapshots.add(upcomingMovieSnapshotsRepository.save(upcoming));
         }
 
-        return savedUpcomingSnapshot;
+        return savedSnapshots;
     }
 
 

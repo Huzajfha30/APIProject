@@ -1,37 +1,31 @@
 package com.cinematracker.cinematracker.model;
 
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
-import java.util.Date;
-
 
 @Getter
 @Setter
-@NoArgsConstructor
-@AllArgsConstructor
 @Entity
-public class Movie {
+public class UpcomingMovieSnapshots {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @JsonIgnore
     private Long id;
 
-    private String title;
-    //private String description;
-    private Date releaseDate;
-    private int duration;
     private double rating;
     @Column(nullable = true)
     private Integer voteCount;
-    private String posterPath;
-    @Column(nullable = true)
-    private Long tmdbId;
+
+    @ManyToOne
+    @JoinColumn(name = "movie_id")
+    private Movie movie;
+
+    @ManyToOne
+    @JoinColumn(name = "upcoming_snapshot_id")
+    private UpcomingSnapshot upcomingSnapshot;
 
 
 

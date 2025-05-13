@@ -12,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -41,9 +43,11 @@ public class MovieController {
     @Autowired
     private TMDBService tmdbService;
     @Autowired
-    private UpcomingMoviesSnapshotRepository upcomingMoviesSnapshotRepository;
+    private UpcomingMovieSnapshotsRepository upcomingMovieSnapshotsRepository;
     @Autowired
     private UpcomingSnapshotsRepository upcomingSnapshotRepository;
+
+    private static final Logger log = LoggerFactory.getLogger(MovieController.class);
 
     @GetMapping("/snapshot")
     public List<Snapshots> getAllSnapshots() {
@@ -104,13 +108,19 @@ public class MovieController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Snapshot not found");
         }
     }
-    @DeleteMapping("/upcoming-snapshot/{snapshotId}")
-    public ResponseEntity<String> deleteUpcomingSnapshot(@PathVariable Long snapshotId) {
-        boolean deleted = snapshotService.deleteUpcomingSnapshot(snapshotId);
-        if (deleted) {
-            return ResponseEntity.ok("Upcoming snapshot deleted successfully");
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Upcoming snapshot not found");
+
+    @DeleteMapping("/upcoming-snapshot/{id}")
+    public ResponseEntity<?> deleteUpcomingSnapshot(@PathVariable Long id) {
+        try {
+            if (!upcomingSnapshotRepository.existsById(id)) {
+                return ResponseEntity.notFound().build();
+            }
+            upcomingSnapshotRepository.deleteById(id);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            log.error("Error deleting snapshot: " + e.getMessage(), e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Could not delete snapshot: " + e.getMessage());
         }
     }
 
@@ -128,9 +138,9 @@ public class MovieController {
     }
 
     @PostMapping("/fetch-upcoming")
-    public ResponseEntity<UpcomingSnapshot> fetchAndSaveUpcomingMovies() {
-        UpcomingSnapshot snapshot = movieSnapshotService.fetchAndSaveUpcomingMovies();
-        return ResponseEntity.status(HttpStatus.CREATED).body(snapshot);
+    public ResponseEntity<List<UpcomingMovieSnapshots>> fetchAndSaveUpcomingMovies() {
+        List<UpcomingMovieSnapshots> snapshots = movieSnapshotService.fetchAndSaveUpcomingMovies();
+        return ResponseEntity.status(HttpStatus.CREATED).body(snapshots);
     }
 
     @GetMapping("/upcoming-snapshot-dates")
@@ -141,9 +151,9 @@ public class MovieController {
     }
 
     @GetMapping("/upcoming-snapshots/{snapshotId}")
-    public List<UpcomingMoviesSnapshot> getUpcomingMoviesBySnapshotId(@PathVariable Long snapshotId) {
+    public List<UpcomingMovieSnapshots> getUpcomingMoviesBySnapshotId(@PathVariable Long snapshotId) {
         UpcomingSnapshot snapshot = upcomingSnapshotRepository.findById(snapshotId).orElseThrow();
-        return upcomingMoviesSnapshotRepository.findByUpcomingSnapshot(snapshot);
+        return upcomingMovieSnapshotsRepository.findByUpcomingSnapshot(snapshot);
     }
     @GetMapping("/movie-vote-history/by-title/{title}")
     public List<MovieSnapshots> getMovieHistoryByTitle(@PathVariable String title) {
