@@ -31,11 +31,6 @@ public class SnapshotFactory {
         snapshots.setCreatedAt(createdAt);
         return snapshots;
     }
-    public Snapshots createDefaultSnapshot() {
-        LocalDateTime now = LocalDateTime.now();
-        Snapshots snapshots = new Snapshots();
-        snapshots.setCreatedAt(now);
-        return snapshots;
     }
 
 
