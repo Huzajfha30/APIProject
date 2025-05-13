@@ -6,13 +6,12 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
-
+@AllArgsConstructor
 public class SnapshotDto {
     private Long id;
     private LocalDateTime createdAt;
-
 }

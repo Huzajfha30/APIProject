@@ -49,6 +49,7 @@ public class MovieSnapshotService {
             Movie movie = new Movie();
             movie.setTitle(movieDto.getTitle());
             movie.setReleaseDate(movieDto.getReleaseDate());
+            movie.setPosterPath(movieDto.getPosterPath());
             movie = movieService.saveMovie(movie);
 
             // Create MovieSnapshots entity linking movie to snapshot
@@ -57,6 +58,7 @@ public class MovieSnapshotService {
             movieSnapshot.setSnapshots(snapshot);
             movieSnapshot.setRating(movieDto.getRating());
             movieSnapshot.setVoteCount(movieDto.getVoteCount());
+
 
             save(movieSnapshot);
         }
