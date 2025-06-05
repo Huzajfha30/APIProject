@@ -23,19 +23,11 @@ public class TMDBService {
     @Value("${tmdb.api.key}")
     private String apiKey;
 
-    @Value("${tmdb.api.url.now_playing}")
-    private String apiUrl;
+
     @Value("${tmdb.api.url.upcoming}")
     private String upcomingUrl;
 
-    public TMDBResponseDto getNowPlayingMovies() {
-        String url = UriComponentsBuilder.fromHttpUrl(apiUrl)
-                .queryParam("api_key", apiKey)
-                .queryParam("language", "en-US")
-                .queryParam("page", 1)
-                .build().toUriString();
-        return restTemplate.getForObject(url, TMDBResponseDto.class);
-    }
+
 
     public TMDBResponseDto getUpcomingMovies() {
         String url = UriComponentsBuilder.fromHttpUrl(upcomingUrl)
