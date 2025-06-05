@@ -29,7 +29,7 @@ public class UpcomingSnapshotService {
     public List<UpcomingMovieSnapshots> fetchAndSaveUpcomingMovies() {
         TMDBResponseDto response = tmdbService.getUpcomingMovies();
 
-        //HER BRUGER min FACTORY
+
         UpcomingSnapshotFactory factory = UpcomingSnapshotFactory.getInstance();
         UpcomingSnapshot upcomingSnapshot = factory.createDefaultSnapshot();
         UpcomingSnapshot savedUpcomingSnapshot = upcomingSnapshotRepository.save(upcomingSnapshot);
@@ -37,7 +37,7 @@ public class UpcomingSnapshotService {
         List<UpcomingMovieSnapshots> savedSnapshots = new ArrayList<>();
 
         for (TMDBMovieDto dto : response.getResults()) {
-            // Opret Movie (eller find/udskift hvis du vil undgå dubletter)
+
             Movie movie = new Movie();
             movie.setTitle(dto.getTitle());
             movie.setReleaseDate(dto.getReleaseDate());
@@ -60,7 +60,7 @@ public class UpcomingSnapshotService {
         return savedSnapshots;
     }
 
-    @Transactional // Gør det atomic!
+    @Transactional
     public void addTestVotesForMovie(Long movieId, List<Long> snapshotIds, List<Integer> voteCounts, double rating) {
         if (snapshotIds.size() != voteCounts.size()) {
             throw new IllegalArgumentException("snapshotIds og voteCounts skal være lige lange!");
@@ -75,7 +75,7 @@ public class UpcomingSnapshotService {
             UpcomingSnapshot snapshot = upcomingSnapshotRepository.findById(snapId)
                     .orElseThrow(() -> new RuntimeException("Snapshot ikke fundet"));
 
-            // Tjek om filmen allerede findes i det snapshot
+
             boolean exists = upcomingMovieSnapshotsRepository
                     .findByUpcomingSnapshot(snapshot)
                     .stream()
